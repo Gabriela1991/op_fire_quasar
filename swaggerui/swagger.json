@@ -1,0 +1,310 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "this is to show how to write RESTful APIs in golang.\nthat is to provide a detailed overview of the language specs",
+    "title": "Account API.",
+    "contact": {
+      "name": "Royal Team",
+      "email": "royal@falabella.onmicrosoft.com"
+    },
+    "version": "1.0.1"
+  },
+  "host": "nsr-ormg-test.sodimac-it.com/nsrorffmsdecryptqrsod",
+  "paths": {
+    "/api/healthCheck": {
+      "get": {
+        "description": "If the application is run, health will be returned else Error Not Found (404) will be returned.",
+        "tags": [
+          "health"
+        ],
+        "summary": "Return an HealthCheck of application.",
+        "operationId": "getHealthCheck",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/healthRes"
+          },
+          "404": {
+            "$ref": "#/responses/notFoundReq"
+          }
+        }
+      }
+    },
+    "/topsecret": {
+      "post": {
+        "description": "Gets the location of the ship and the message it emits.",
+        "tags": [
+          "Fire_Quasar"
+        ],
+        "summary": "topsecret.",
+        "operationId": "topsecret",
+        "parameters": [
+          {
+            "name": "topsecret",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "satellites"
+              ],
+              "properties": {
+                "satellites": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "distance": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100,
+                        "summary": "Distance from transmitter to satellite"
+                      },
+                      "message": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "example": [
+                          "this",
+                          "is",
+                          "a",
+                          "message"
+                        ],
+                        "summary": "Message to issue"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Kenoby",
+                        "summary": "Satellite name"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/topSecretResp"
+          },
+          "400": {
+            "$ref": "#/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/responses/notFoundReq"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "HealthModel": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "x-go-name": "Status"
+        }
+      },
+      "x-go-package": "app/src/bundles/health-check/models"
+    },
+    "Positions": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "description": "X axix coordinate",
+          "type": "number",
+          "format": "float",
+          "x-go-name": "AxisX"
+        },
+        "y": {
+          "description": "Y axix coordinate",
+          "type": "number",
+          "format": "float",
+          "x-go-name": "AxisY"
+        }
+      },
+      "x-go-package": "app/src/bundles/quasar-fire/models"
+    },
+    "TopSecretResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "description": "Message received",
+          "type": "string",
+          "x-go-name": "Message"
+        },
+        "position": {
+          "$ref": "#/definitions/Positions"
+        }
+      },
+      "x-go-package": "app/src/bundles/quasar-fire/models"
+    }
+  },
+  "responses": {
+    "badRequest": {
+      "description": "Error Bad Request",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 400 -  Bad Request",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "conflict": {
+      "description": "Conflict Error",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 409 - Conflict Error",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "forbidden": {
+      "description": "Error Forbidden",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 403 - Forbidden",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "healthRes": {
+      "description": "Health response payload",
+      "schema": {
+        "$ref": "#/definitions/HealthModel"
+      }
+    },
+    "internalServer": {
+      "description": "Internal Server Error",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 500 - Internal Server Error",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "notFoundReq": {
+      "description": "Error Not Found",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 404 -  Not Found",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "notFoundResource": {
+      "description": "Not found resource message",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 204 - Not found resource message",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "okResponse": {
+      "description": "Success response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 200 - OK",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "resourceCreated": {
+      "description": "Resource created",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 201 - Resource created",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "serviceUnavailable": {
+      "description": "Error Service Unavailable",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 503 -  Service Unavailable",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    },
+    "topSecretResp": {
+      "description": "topsecret response payload",
+      "schema": {
+        "$ref": "#/definitions/TopSecretResponse"
+      }
+    },
+    "unauthorizedRequest": {
+      "description": "Error Unauthorized Request",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "HTTP status code 401 - Unauthorized Request",
+            "type": "string",
+            "x-go-name": "Message"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "API-KEY",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ]
+}

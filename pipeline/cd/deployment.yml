@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {APPNAME}
+  name: {APPNAME}
+  namespace: royal
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+  minReadySeconds: 30
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app: {APPNAME}
+  template:
+    metadata:
+      labels:
+        app: {APPNAME}
+    spec:
+      containers:
+        - env:
+            - name: ENVIRONMENT
+              value: {ENVIRONMENT}
+            - name: BUSINESS
+              value: 'sodimac'
+            - name: GSM_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: secret-manager
+                  key: NSR_GSM_AUTH
+            - name: GCSM_PROJECT
+              valueFrom:
+                secretKeyRef:
+                  name: secret-manager
+                  key: GCSM_PROJECT
+            - name: PROJECT_NAME
+              value: "{APPNAME}"
+            - name: BRANCH
+              value: {BRANCH}
+          image: 'us.gcr.io/{PROJECTID}/{CI_PROJECT_NAME}:{VERSION}'
+          name: {APPNAME}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: "http"
+              protocol: "TCP"
+              
+          livenessProbe:
+            httpGet:
+              path: /healthCheck
+              port: 8080
+            initialDelaySeconds: 85
+            periodSeconds: 15
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthCheck
+              port: 8080
+            initialDelaySeconds: 80
+            periodSeconds: 15
+            timeoutSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: "700m"
+              memory: "600Mi"
+            requests:
+              cpu: "250m"
+              memory: "250Mi"
