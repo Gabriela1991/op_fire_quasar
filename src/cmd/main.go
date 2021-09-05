@@ -48,6 +48,7 @@ func main() {
 	// Declare bundle server
 	server.HealthCheckRoute(httpRouter)
 	server.GetTopSecretRoute(httpRouter)
+	server.GetTopSecretSplitRoute(httpRouter)
 
 	httpRouter.GET("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Up and running...")

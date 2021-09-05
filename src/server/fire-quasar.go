@@ -64,3 +64,41 @@ func GetTopSecretRoute(httpRouter router.Router) {
 	//     "$ref": "#/responses/notFoundReq"
 	httpRouter.POST("/topsecret", fireQuasarController.TopSecret)
 }
+
+func GetTopSecretSplitRoute(httpRouter router.Router) {
+	// swagger:operation GET /topsecretsplit Fire_Quasar topsecretsplit
+	// ---
+	// summary: topsecretsplit.
+	// description: Gets the location of the ship and the message it emits.
+	// parameters:
+	// - name: notificationTurn
+	//   in: body
+	//   required: true
+	//   schema:
+	//     type: object
+	//     required:
+	//       - distance
+	//       - message
+	//     properties:
+	//       distance:
+	//         type: number
+	//         format: float
+	//         summary: Distance from transmitter to satellite
+	//         example: 100.0
+	//       message:
+	//         type: array
+	//         items:
+	//           type: string
+	//         summary: Message to issue
+	//         example: ["this", "is", "a", "message"]
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/topSecretResp"
+	//   "400":
+	//     summary: Message error
+	//     "$ref": "#/responses/badRequest"
+	//   "404":
+	//     summary: Message error
+	//     "$ref": "#/responses/notFoundReq"
+	httpRouter.GET("/topsecret_split/{satellite_name}", fireQuasarController.TopSecretSplit)
+}

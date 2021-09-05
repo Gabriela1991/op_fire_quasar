@@ -14,6 +14,7 @@ type topSecretService struct{}
 
 type TopSecretService interface {
 	TopSecret(satellites models.Satelites) (models.TopSecretResponse, error)
+	TopSecretSplit(satellites models.TopSecretSplitReq, satName string) (models.TopSecretResponse, error)
 }
 
 func NewTopSecretService() TopSecretService {
@@ -34,5 +35,28 @@ func (*topSecretService) TopSecret(satellites models.Satelites) (models.TopSecre
 		AxisX: x,
 		AxisY: y,
 	}
+	return topSecretResp, nil
+}
+
+func (*topSecretService) TopSecretSplit(satellite models.TopSecretSplitReq, satName string) (models.TopSecretResponse, error) {
+	var topSecretResp models.TopSecretResponse
+
+	x, y, err := locationSrv.CalculateCircle(satName, satellite.Distance)
+	msg := messageSrv.GetMessage(satellite.Message)
+
+	if err != nil {
+		return topSecretResp, err
+	}
+
+	if msg == "" {
+		return topSecretResp, errors.New("There is not enough information to get the message")
+	}
+
+	topSecretResp.Message = msg
+	topSecretResp.Position = models.Positions{
+		AxisX: x,
+		AxisY: y,
+	}
+
 	return topSecretResp, nil
 }

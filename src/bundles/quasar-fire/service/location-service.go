@@ -3,6 +3,8 @@ package service
 import (
 	"app/src/bundles/quasar-fire/models"
 	"app/src/bundles/quasar-fire/util"
+	"errors"
+	"strings"
 )
 
 var (
@@ -13,6 +15,7 @@ type locationService struct{}
 
 type LocationService interface {
 	GetLocation(distances ...float32) (x, y float32)
+	CalculateCircle(sat_name string, distance float32) (float32, float32, error)
 }
 
 func NewLocationService() LocationService {
@@ -51,4 +54,32 @@ func getCircles(distances []float32) []models.Circle {
 	}
 	circles = append(circles, circle)
 	return circles
+}
+
+func (*locationService) CalculateCircle(sat_name string, distance float32) (float32, float32, error) {
+	isSat, circle := validateCircle(sat_name, distance)
+
+	if !isSat {
+		return 0, 0, errors.New("Satellite invalid")
+	}
+
+	x := (-circle.AxisX) / 2
+	y := (-circle.AxisY) / 2
+	return float32(x), float32(y), nil
+}
+
+func validateCircle(sat_name string, distance float32) (bool, models.Circle) {
+	distances := []float32{distance, distance, distance}
+	circles := getCircles(distances)
+
+	switch strings.ToLower(sat_name) {
+	case "kenoby":
+		return true, circles[0]
+	case "skywalker":
+		return true, circles[1]
+	case "sato":
+		return true, circles[2]
+	default:
+		return false, circles[0]
+	}
 }

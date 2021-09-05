@@ -13,31 +13,13 @@
     "description": "this is to show how to write RESTful APIs in golang.\nthat is to provide a detailed overview of the language specs",
     "title": "Account API.",
     "contact": {
-      "name": "Royal Team",
-      "email": "royal@falabella.onmicrosoft.com"
+      "name": "Gabriela Loreto",
+      "email": "mariagabriela191@hotmail.com"
     },
-    "version": "1.0.1"
+    "version": "1.0.0"
   },
   "host": "nsr-ormg-test.sodimac-it.com/nsrorffmsdecryptqrsod",
   "paths": {
-    "/api/healthCheck": {
-      "get": {
-        "description": "If the application is run, health will be returned else Error Not Found (404) will be returned.",
-        "tags": [
-          "health"
-        ],
-        "summary": "Return an HealthCheck of application.",
-        "operationId": "getHealthCheck",
-        "responses": {
-          "200": {
-            "$ref": "#/responses/healthRes"
-          },
-          "404": {
-            "$ref": "#/responses/notFoundReq"
-          }
-        }
-      }
-    },
     "/topsecret": {
       "post": {
         "description": "Gets the location of the ship and the message it emits.",
@@ -88,6 +70,62 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/topSecretResp"
+          },
+          "400": {
+            "$ref": "#/responses/badRequest"
+          },
+          "404": {
+            "$ref": "#/responses/notFoundReq"
+          }
+        }
+      }
+    },
+    "/topsecretsplit": {
+      "get": {
+        "description": "Gets the location of the ship and the message it emits.",
+        "tags": [
+          "Fire_Quasar"
+        ],
+        "summary": "topsecretsplit.",
+        "operationId": "topsecretsplit",
+        "parameters": [
+          {
+            "name": "notificationTurn",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "distance",
+                "message"
+              ],
+              "properties": {
+                "distance": {
+                  "type": "number",
+                  "format": "float",
+                  "example": 100,
+                  "summary": "Distance from transmitter to satellite"
+                },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "this",
+                    "is",
+                    "a",
+                    "message"
+                  ],
+                  "summary": "Message to issue"
                 }
               }
             }

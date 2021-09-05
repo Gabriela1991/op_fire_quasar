@@ -11,6 +11,7 @@ import (
 	"app/src/bundles/quasar-fire/models"
 	"app/src/bundles/quasar-fire/service"
 
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,6 +23,20 @@ var (
 func TestTopSecret_BadRequest(t *testing.T) {
 
 	req, _ := http.NewRequest("POST", "topsecret", nil)
+
+	handler := http.HandlerFunc(fireQuasarController.TopSecret)
+
+	response := httptest.NewRecorder()
+
+	handler.ServeHTTP(response, req)
+
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+
+}
+
+func TestTopSecret_NotFound(t *testing.T) {
+
+	req, _ := http.NewRequest("POST", "topsecre", nil)
 
 	handler := http.HandlerFunc(fireQuasarController.TopSecret)
 
@@ -95,4 +110,82 @@ func getSatellites_Ok() models.Satelites {
 	satList = append(satList, sat)
 	satellites.Satellites = satList
 	return satellites
+}
+
+func TestTopSecretSplit_BadRequest(t *testing.T) {
+
+	req, _ := http.NewRequest("GET", "topsecret_split", nil)
+
+	handler := http.HandlerFunc(fireQuasarController.TopSecret)
+
+	response := httptest.NewRecorder()
+
+	handler.ServeHTTP(response, req)
+
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+
+}
+
+func TestTopSecretSplit_NotFound(t *testing.T) {
+
+	req, _ := http.NewRequest("GET", "topsecret_s", nil)
+
+	handler := http.HandlerFunc(fireQuasarController.TopSecret)
+
+	response := httptest.NewRecorder()
+
+	handler.ServeHTTP(response, req)
+
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+
+}
+
+func TestTopSecretSplit_Ok(t *testing.T) {
+	topSecretSplitreq := models.TopSecretSplitReq{
+		Distance: 100,
+		Message:  []string{"Esta", "es", "una", "prueba"},
+	}
+	jsonR, _ := json.Marshal(&topSecretSplitreq)
+	bodyresp := strings.NewReader(string(jsonR))
+
+	vars := map[string]string{
+		"satellite_name": "skywalker",
+	}
+
+	req, _ := http.NewRequest("GET", "topsecret_split/skywalker", bodyresp)
+	req = mux.SetURLVars(req, vars)
+
+	response := httptest.NewRecorder()
+	handler := http.HandlerFunc(fireQuasarController.TopSecretSplit)
+	handler.ServeHTTP(response, req)
+
+	var tsResponse models.TopSecretResponse
+	json.NewDecoder(io.Reader(response.Body)).Decode(&tsResponse)
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.NotNil(t, tsResponse.Message)
+}
+
+func TestTopSecretSplit_SatErr(t *testing.T) {
+	topSecretSplitreq := models.TopSecretSplitReq{
+		Distance: 100,
+		Message:  []string{"Esta", "es", "una", "prueba"},
+	}
+	jsonR, _ := json.Marshal(&topSecretSplitreq)
+	bodyresp := strings.NewReader(string(jsonR))
+
+	vars := map[string]string{
+		"satellite_name": "prueba",
+	}
+
+	req, _ := http.NewRequest("GET", "topsecret_split/prueba", bodyresp)
+	req = mux.SetURLVars(req, vars)
+
+	response := httptest.NewRecorder()
+	handler := http.HandlerFunc(fireQuasarController.TopSecretSplit)
+	handler.ServeHTTP(response, req)
+
+	var tsResponse models.TopSecretResponse
+	json.NewDecoder(io.Reader(response.Body)).Decode(&tsResponse)
+	assert.Equal(t, http.StatusNotFound, response.Code)
+	assert.NotNil(t, tsResponse.Message)
 }

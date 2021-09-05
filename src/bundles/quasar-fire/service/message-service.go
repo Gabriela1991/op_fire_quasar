@@ -16,7 +16,11 @@ func NewMessageService() MessageService {
 
 func (*messageService) GetMessage(messages ...[]string) (msg string) {
 	var messageCon []string = concatenateArrays(messages)
-	return putMessage(unique(messageCon), messages)
+	if len(messages) == 1 {
+		return putMessage(messages[0])
+	} else {
+		return putMultipleMessage(unique(messageCon), messages)
+	}
 }
 
 func unique(slice []string) []string {
@@ -42,7 +46,7 @@ func concatenateArrays(msgArrays [][]string) []string {
 	return messages
 }
 
-func putMessage(message []string, msgArrays [][]string) string {
+func putMultipleMessage(message []string, msgArrays [][]string) string {
 	finalMessage := make([]string, len(message), len(message))
 	index := len(message)
 	for _, phrase := range message {
@@ -59,4 +63,23 @@ func putMessage(message []string, msgArrays [][]string) string {
 		}
 	}
 	return strings.Join(finalMessage, " ")
+}
+
+func putMessage(message []string) string {
+	countEmpties := countEmpty(message)
+
+	if countEmpties == len(message) || countEmpties > 0 {
+		return ""
+	}
+	return strings.Join(message, " ")
+}
+
+func countEmpty(message []string) int {
+	count := 0
+	for i, phrase := range message {
+		if strings.Compare(" ", phrase) == 0 && i != 0 {
+			count++
+		}
+	}
+	return count
 }
