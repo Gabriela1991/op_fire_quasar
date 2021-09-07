@@ -42,3 +42,7 @@ src/http/mux-router.go
 # Local swagger
              1.- Generate file swagger "swagger generate spec -o ./swaggerui/swagger.json" 
              2.- UP server "go run src/cmd/main.go" and go to http://localhost:8080/swaggerui/
+
+# Exposed service
+             1.- url base: https://warm-beach-67225.herokuapp.com/  
+             2.- swagger url: https://warm-beach-67225.herokuapp.com/swaggerui/
